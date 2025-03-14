@@ -20,11 +20,11 @@ public class InitConfig {
     private final UnitCacheService unitCacheService;
     private final UnitRepository unitRepository;
 
-//    @PostConstruct
+    @PostConstruct
     public void init() {
         UnitRandomUtil.initAllDescriptions();
         unitRepository.deleteAll();
-        unitRandomService.initRandomUnits(10);
+        unitRandomService.initRandomUnits(90);
         log.info("available-units cache updated to {}", unitCacheService.updateAllAvailableUnits());
     }
 

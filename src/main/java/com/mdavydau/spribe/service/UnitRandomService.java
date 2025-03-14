@@ -20,7 +20,6 @@ import java.util.stream.IntStream;
 public class UnitRandomService {
 
     private final UnitService unitService;
-    private final BookingService bookingService;
 
     public void initRandomUnits(int size) {
         IntStream.range(0, size).forEach(i -> {
