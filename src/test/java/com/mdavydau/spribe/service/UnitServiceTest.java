@@ -6,6 +6,8 @@ import com.mdavydau.spribe.dto.BookingRequestDto;
 import com.mdavydau.spribe.dto.UnitDto;
 import com.mdavydau.spribe.dto.UnitSearchDto;
 import com.mdavydau.spribe.entity.BookingStatus;
+import com.mdavydau.spribe.exception.BusinessException;
+import com.mdavydau.spribe.exception.NotFoundException;
 import com.mdavydau.spribe.utils.UnitUtils;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -111,7 +113,7 @@ class UnitServiceTest extends BaseSpringBootTestConfig {
                 .extracting(BookingDto::getUnitId, BookingDto::getBookingStartDate, BookingDto::getBookingEndDate, BookingDto::getEmail)
                 .contains(unitDto.getId(), start, end, email);
 
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> unitService.book(unitDto.getId(), bookingRequestDto));
+        BusinessException exception = assertThrows(BusinessException.class, () -> unitService.book(unitDto.getId(), bookingRequestDto));
         String expectedMessage = "is already booked for provided start";
         String actualMessage = exception.getMessage();
 
@@ -166,7 +168,7 @@ class UnitServiceTest extends BaseSpringBootTestConfig {
                 .email(email)
                 .build();
 
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> unitService.book(unitDto.getId(), bookingRequestDto));
+        NotFoundException exception = assertThrows(NotFoundException.class, () -> unitService.book(unitDto.getId(), bookingRequestDto));
         String expectedMessage = "Unit not found";
         String actualMessage = exception.getMessage();
 
@@ -230,7 +232,7 @@ class UnitServiceTest extends BaseSpringBootTestConfig {
                         successCount.incrementAndGet();
                         log.info("Booking from thread {}", threadNum);
                         verifyBooking(booked, unitDto.getId(), start, end, email);
-                    } catch (RuntimeException e) {
+                    } catch (BusinessException e) {
                         failureCount.incrementAndGet();
                         log.info("Booking failed from thread {}", threadNum);
                         verifyBookingException(bookingRequestDto, unitDto.getId());
@@ -264,7 +266,7 @@ class UnitServiceTest extends BaseSpringBootTestConfig {
 
     private void verifyBookingException(BookingRequestDto bookingRequestDto, UUID unitId) {
         String expectedMessage = "is already booked for provided start";
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> unitService.book(unitId, bookingRequestDto));
+        BusinessException exception = assertThrows(BusinessException.class, () -> unitService.book(unitId, bookingRequestDto));
         String actualMessage = exception.getMessage();
         assertTrue(actualMessage.contains(expectedMessage));
     }

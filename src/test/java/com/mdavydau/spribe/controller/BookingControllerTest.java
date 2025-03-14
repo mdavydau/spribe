@@ -12,10 +12,12 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class BookingControllerTest extends BaseSpringBootTestConfig {
 
@@ -37,8 +39,7 @@ class BookingControllerTest extends BaseSpringBootTestConfig {
         ResultActions resultActions =
                 mockMvc.perform(
                                 post("/bookings/{id}/cancellation", bookingDto.getId())
-                                        .contentType(MediaType.APPLICATION_JSON)
-                                        .content(objectMapper.writeValueAsString(unitDto)))
+                                        .contentType(MediaType.APPLICATION_JSON))
                         .andDo(print());
 
         BookingDto response = testService.response(resultActions, BookingDto.class);
@@ -47,6 +48,20 @@ class BookingControllerTest extends BaseSpringBootTestConfig {
                 .as("Unit cancelled")
                 .extracting(BookingDto::getUnitId, BookingDto::getStatus)
                 .contains(unitDto.getId(), BookingStatus.CANCELLED);
+    }
+
+    @SneakyThrows
+    @Test
+    @DisplayName("Should not find booking cancellation")
+    void bookingNotFindBookingForCancellation() {
+        ResultActions resultActions =
+                mockMvc.perform(
+                                post("/bookings/{id}/cancellation", UUID.randomUUID())
+                                        .contentType(MediaType.APPLICATION_JSON))
+                        .andDo(print());
+
+        resultActions
+                .andExpect(status().isNotFound());
     }
 
     @SneakyThrows
@@ -71,5 +86,19 @@ class BookingControllerTest extends BaseSpringBootTestConfig {
                 .as("Unit confirmed")
                 .extracting(BookingDto::getUnitId, BookingDto::getStatus)
                 .contains(unitDto.getId(), BookingStatus.CONFIRMED);
+    }
+
+    @SneakyThrows
+    @Test
+    @DisplayName("Should not find booking confirmation")
+    void bookingNotFindBookingForConfirmation() {
+        ResultActions resultActions =
+                mockMvc.perform(
+                                post("/bookings/{id}/confirmation", UUID.randomUUID())
+                                        .contentType(MediaType.APPLICATION_JSON))
+                        .andDo(print());
+
+        resultActions
+                .andExpect(status().isNotFound());
     }
 }

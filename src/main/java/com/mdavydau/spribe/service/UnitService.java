@@ -5,6 +5,8 @@ import com.mdavydau.spribe.dto.BookingRequestDto;
 import com.mdavydau.spribe.dto.UnitDto;
 import com.mdavydau.spribe.dto.UnitSearchDto;
 import com.mdavydau.spribe.entity.UnitEntity;
+import com.mdavydau.spribe.exception.BusinessException;
+import com.mdavydau.spribe.exception.NotFoundException;
 import com.mdavydau.spribe.mapper.UnitMapper;
 import com.mdavydau.spribe.repository.UnitRepository;
 import com.mdavydau.spribe.utils.UnitUtils;
@@ -72,7 +74,7 @@ public class UnitService {
                     return unitEntity;
                 })
                 .map(unitMapper::toDto)
-                .orElseThrow(() -> new RuntimeException("Unit not found"));
+                .orElseThrow(() -> new NotFoundException("Unit not found"));
     }
 
     public Integer countAllAvailableUnits() {
@@ -98,7 +100,7 @@ public class UnitService {
     @Transactional
     public BookingDto book(UUID id, BookingRequestDto bookingRequestDto) {
         if (bookingRequestDto.getStartDate().isAfter(bookingRequestDto.getEndDate())) {
-            throw new RuntimeException("Invalid booking start and end date");
+            throw new BusinessException("Invalid booking start and end date");
         }
 
         LocalDateTime start = LocalDateTime.of(bookingRequestDto.getStartDate(), LocalTime.MIN);
@@ -110,14 +112,14 @@ public class UnitService {
                     return unitEntity;
                 })
                 .map(unit -> bookingService.create(unit, start, end, bookingRequestDto.getEmail()))
-                .orElseThrow(() -> new RuntimeException("Unit not found"));
+                .orElseThrow(() -> new NotFoundException("Unit not found"));
     }
 
     protected void validateBookingDateRange(UUID unitId, LocalDateTime start, LocalDateTime end) {
         if (bookingService.findAllBooked(start, end)
                 .stream().map(BookingDto::getUnitId)
                 .anyMatch(unitId::equals)) {
-            throw new RuntimeException(String.format("Current unit %s is already booked for provided start %s end %s dates", unitId, start, end));
+            throw new BusinessException(String.format("Current unit %s is already booked for provided start %s end %s dates", unitId, start, end));
         }
     }
 }

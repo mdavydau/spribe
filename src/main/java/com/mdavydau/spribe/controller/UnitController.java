@@ -10,6 +10,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,18 +23,21 @@ public class UnitController {
 
     private final UnitService unitService;
 
+    @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Create new unit")
     @PostMapping(value = "/units", produces = MediaType.APPLICATION_JSON_VALUE)
     public UnitDto create(@RequestBody UnitDto unitDto) {
         return unitService.create(unitDto);
     }
 
+    @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Update existing unit")
     @PutMapping(value = "/units/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public UnitDto update(@PathVariable UUID id, @RequestBody UnitDto unitDto) {
         return unitService.update(id, unitDto);
     }
 
+    @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Search available units")
     @PostMapping(value = "/units/search", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<UnitDto> search(@RequestBody UnitSearchDto searchDto,
@@ -41,12 +45,14 @@ public class UnitController {
         return unitService.search(searchDto, pageable);
     }
 
+    @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Book available unit")
     @PostMapping(value = "/units/{id}/book", produces = MediaType.APPLICATION_JSON_VALUE)
     public BookingDto book(@PathVariable UUID id, @Valid @RequestBody BookingRequestDto bookingRequestDto) {
         return unitService.book(id, bookingRequestDto);
     }
 
+    @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Units available for booking (cached)")
     @GetMapping(value = "/units/count", produces = MediaType.APPLICATION_JSON_VALUE)
     public Integer countAllAvailableUnits() {

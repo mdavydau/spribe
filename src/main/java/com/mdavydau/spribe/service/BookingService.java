@@ -4,6 +4,7 @@ import com.mdavydau.spribe.dto.BookingDto;
 import com.mdavydau.spribe.entity.BookingEntity;
 import com.mdavydau.spribe.entity.BookingStatus;
 import com.mdavydau.spribe.entity.UnitEntity;
+import com.mdavydau.spribe.exception.NotFoundException;
 import com.mdavydau.spribe.mapper.BookingMapper;
 import com.mdavydau.spribe.repository.BookingRepository;
 import lombok.RequiredArgsConstructor;
@@ -40,7 +41,7 @@ public class BookingService {
                 })
                 .map(bookingRepository::save)
                 .map(bookingMapper::toDto)
-                .orElseThrow(() -> new RuntimeException("Booking not found"));
+                .orElseThrow(() -> new NotFoundException("Booking not found"));
     }
 
     public BookingDto bookingConfirmation(UUID id) {
@@ -51,7 +52,7 @@ public class BookingService {
                 })
                 .map(bookingRepository::save)
                 .map(bookingMapper::toDto)
-                .orElseThrow(() -> new RuntimeException("Booking not found"));
+                .orElseThrow(() -> new NotFoundException("Booking not found"));
     }
 
     public List<BookingDto> findAllBooked(LocalDateTime startDate, LocalDateTime endDate) {
