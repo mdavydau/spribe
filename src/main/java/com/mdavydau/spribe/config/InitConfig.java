@@ -23,7 +23,7 @@ public class InitConfig {
     @PostConstruct
     public void init() {
         UnitRandomUtil.initAllDescriptions();
-        unitRepository.deleteAll();
+//        unitRepository.deleteAll();
         unitRandomService.initRandomUnits(90);
         log.info("available-units cache updated to {}", unitCacheService.updateAllAvailableUnits());
     }

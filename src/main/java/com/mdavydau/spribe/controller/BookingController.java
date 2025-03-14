@@ -2,6 +2,7 @@ package com.mdavydau.spribe.controller;
 
 import com.mdavydau.spribe.dto.BookingDto;
 import com.mdavydau.spribe.service.BookingService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,11 +17,13 @@ public class BookingController {
 
     public final BookingService bookingService;
 
+    @Operation(summary = "Booking cancellation")
     @PostMapping(value = "/bookings/{id}/cancellation", produces = MediaType.APPLICATION_JSON_VALUE)
     public BookingDto bookingCancellation(@PathVariable UUID id) {
         return bookingService.bookingCancellation(id);
     }
 
+    @Operation(summary = "Booking confirmation (payment)")
     @PostMapping(value = "/bookings/{id}/confirmation", produces = MediaType.APPLICATION_JSON_VALUE)
     public BookingDto bookingConfirmation(@PathVariable UUID id) {
         return bookingService.bookingConfirmation(id);

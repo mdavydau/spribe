@@ -60,7 +60,7 @@ class BookingControllerTest extends BaseSpringBootTestConfig {
         BookingDto bookingDto = testService.createBooking(unitDto.getId(), start, end, email);
         ResultActions resultActions =
                 mockMvc.perform(
-                                post("/bookings/{id}/confirmation", bookingDto)
+                                post("/bookings/{id}/confirmation", bookingDto.getId())
                                         .contentType(MediaType.APPLICATION_JSON)
                                         .content(objectMapper.writeValueAsString(unitDto)))
                         .andDo(print());
